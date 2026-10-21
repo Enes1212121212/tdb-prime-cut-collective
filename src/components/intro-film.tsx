@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import intro from "@/assets/tdb-intro.mp4.asset.json";
+import webm from "@/assets/tdb-intro.webm.asset.json";
 import finalFrame from "@/assets/tdb-intro-final.jpg.asset.json";
 
 /** Play once per visit; the extracted final frame also handles blocked autoplay. */
@@ -11,7 +12,7 @@ export function IntroFilm() {
     const video = ref.current;
     if (!video || window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
     video.muted = true;
-    video.src = intro.url;
+    video.src = video.canPlayType('video/webm; codecs="vp9"') ? webm.url : intro.url;
     video.load();
     void video.play().catch(() => setPlaying(false));
     return () => video.pause();

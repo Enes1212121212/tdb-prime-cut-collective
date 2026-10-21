@@ -1,8 +1,8 @@
-import { render, fireEvent, waitFor } from "@testing-library/react";
+import { cleanup, render, fireEvent, waitFor } from "@testing-library/react";
 import { afterEach, describe, expect, it, vi } from "vitest";
 import { IntroFilm } from "@/components/intro-film";
 
-afterEach(() => vi.restoreAllMocks());
+afterEach(() => { cleanup(); vi.restoreAllMocks(); vi.unstubAllGlobals(); });
 
 function mediaSetup(reducedMotion = false) {
   vi.stubGlobal("matchMedia", () => ({ matches: reducedMotion }));
