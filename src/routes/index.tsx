@@ -1,16 +1,19 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type ReactNode } from "react";
 import heroSteak from "@/assets/hero-steak.jpg";
-import sortiment from "@/assets/sortiment.jpg";
-import lieferung from "@/assets/lieferung.jpg";
-import kuehlhaus from "@/assets/kuehlhaus.jpg";
+import marmorierung from "@/assets/marmorierung.jpg";
+import produktRind from "@/assets/produkt-rind.jpg";
+import produktKalb from "@/assets/produkt-kalb.jpg";
+import produktGefluegel from "@/assets/produkt-gefluegel.jpg";
+import produktLamm from "@/assets/produkt-lamm.jpg";
+import kuehlwagen from "@/assets/kuehlwagen.jpg";
 
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "TDB Food – Premium Fleischgroßhandel" },
-      { name: "description", content: "Rind, Lamm, Geflügel und Hackfleisch in Spitzenqualität. Gekühlt geliefert an Gastronomie und Handel. Bestellung per WhatsApp." },
-      { property: "og:title", content: "TDB Food – Premium Fleischgroßhandel" },
+      { title: "TDB Food – Premium Fleischgroßhandel Köln" },
+      { name: "description", content: "Rind, Kalb, Lamm und Geflügel in Spitzenqualität. Gekühlt geliefert an Gastronomie und Handel. Bestellung per WhatsApp." },
+      { property: "og:title", content: "TDB Food – Premium Fleischgroßhandel Köln" },
       { property: "og:description", content: "Fleisch in Spitzenqualität. Gekühlt geliefert. Bestellung per WhatsApp." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary_large_image" },
@@ -28,6 +31,8 @@ const INSTAGRAM_URL = "https://www.instagram.com/tdb_food";
 const ADDRESS = "Marconistraße 34, 50769 Köln";
 const MAPS_DIR = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(ADDRESS)}`;
 const MAPS_EMBED = `https://www.google.com/maps?q=${encodeURIComponent(ADDRESS)}&output=embed`;
+
+const clamp01 = (v: number) => Math.min(1, Math.max(0, v));
 
 /* ---------- motion helpers ---------- */
 function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
@@ -57,7 +62,7 @@ function useScrollProgress<T extends HTMLElement>() {
       if (!el) return;
       const r = el.getBoundingClientRect();
       const vh = window.innerHeight;
-      setP(Math.min(1, Math.max(0, (vh - r.top) / (vh + r.height))));
+      setP(clamp01((vh - r.top) / (vh + r.height)));
     };
     const onScroll = () => { if (!raf) raf = requestAnimationFrame(update); };
     update();
@@ -68,36 +73,32 @@ function useScrollProgress<T extends HTMLElement>() {
   return [ref, p] as const;
 }
 
-function MagneticHeading({ children, className = "" }: { children: ReactNode; className?: string }) {
-  const ref = useRef<HTMLHeadingElement>(null);
-  const onMove = (e: React.MouseEvent) => {
-    const el = ref.current; if (!el) return;
-    const r = el.getBoundingClientRect();
-    const x = (e.clientX - r.left) / r.width - 0.5;
-    const y = (e.clientY - r.top) / r.height - 0.5;
-    el.style.transform = `translate3d(${x * 14}px, ${y * 10}px, 0)`;
-  };
-  const reset = () => { if (ref.current) ref.current.style.transform = ""; };
+/** words light up one by one as scroll progress advances */
+function ScrollWords({ text, progress, className = "", dim = "text-ink-foreground/15", on = "text-ink-foreground" }: {
+  text: string; progress: number; className?: string; dim?: string; on?: string;
+}) {
+  const words = text.split(" ");
   return (
-    <h2 ref={ref} onMouseMove={onMove} onMouseLeave={reset}
-      className={`display transition-transform duration-700 ease-apple will-change-transform ${className}`}>
-      {children}
-    </h2>
+    <p className={className}>
+      {words.map((w, i) => {
+        const lit = progress * 1.7 - 0.25 > i / words.length;
+        return <span key={i} className={`transition-colors duration-500 ${lit ? on : dim}`}>{w} </span>;
+      })}
+    </p>
   );
 }
 
 /* ---------- page ---------- */
 function Index() {
   return (
-    <main className="overflow-x-clip">
+    <main className="overflow-x-clip bg-ink">
       <Nav />
-      <Hero />
-      <Statement />
-      <Sortiment />
-      <Quality />
-      <Delivery />
-      <Numbers />
-      <Contact />
+      <SceneHero />
+      <SceneQualitaet />
+      <SceneSortiment />
+      <SceneLogistik />
+      <SceneService />
+      <SceneKontakt />
       <Footer />
       <a href={WHATSAPP} target="_blank" rel="noreferrer" aria-label="WhatsApp"
         className="fixed bottom-5 right-5 z-50 flex h-14 w-14 items-center justify-center rounded-full bg-whatsapp text-primary-foreground shadow-lg transition-transform duration-500 ease-apple hover:scale-110 md:hidden">
@@ -108,30 +109,31 @@ function Index() {
 }
 
 function Nav() {
-  const links = [["Sortiment", "#sortiment"], ["Qualität", "#qualitaet"], ["Lieferung", "#lieferung"], ["Kontakt", "#kontakt"]];
+  const links = [["Qualität", "#qualitaet"], ["Sortiment", "#sortiment"], ["Lieferung", "#lieferung"], ["Kontakt", "#kontakt"]];
   return (
-    <header className="glass-nav fixed inset-x-0 top-0 z-40 border-b border-border/50">
-      <nav className="mx-auto flex h-12 max-w-6xl items-center justify-between px-6 text-[13px]">
-        <a href="#" className="font-semibold tracking-tight text-[15px]">TDB<span className="text-accent">.</span>Food</a>
+    <header className="fixed inset-x-0 top-0 z-40 border-b border-ink-foreground/10 bg-ink/70 backdrop-blur-xl">
+      <nav className="mx-auto flex h-12 max-w-6xl items-center justify-between px-6 text-[13px] text-ink-foreground">
+        <a href="#" className="font-semibold tracking-tight text-[15px]">TDB<span className="text-signal">.</span>Food</a>
         <div className="hidden gap-8 md:flex">
           {links.map(([l, h]) => (
-            <a key={h} href={h} className="text-foreground/70 transition-colors duration-300 hover:text-foreground">{l}</a>
+            <a key={h} href={h} className="text-ink-foreground/70 transition-colors duration-300 hover:text-ink-foreground">{l}</a>
           ))}
         </div>
-        <a href={WHATSAPP} target="_blank" rel="noreferrer" className="rounded-full bg-foreground px-3.5 py-1.5 text-background transition-opacity hover:opacity-80">Bestellen</a>
+        <a href={WHATSAPP} target="_blank" rel="noreferrer" className="rounded-full bg-ink-foreground px-3.5 py-1.5 text-ink transition-opacity hover:opacity-80">Bestellen</a>
       </nav>
     </header>
   );
 }
 
-function Hero() {
+/* ---------- Scene 1: Hero ---------- */
+function SceneHero() {
   const [ref, p] = useScrollProgress<HTMLElement>();
-  const t = Math.max(0, p - 0.5) * 2; // 0 while in view top, grows as user scrolls away
+  const t = clamp01((p - 0.5) * 2);
   return (
     <section ref={ref} className="relative min-h-[100svh] bg-ink text-ink-foreground">
       <div className="mx-auto flex max-w-6xl flex-col items-center px-6 pt-32 text-center md:pt-40"
         style={{ opacity: 1 - t * 1.4, transform: `translateY(${t * -60}px)` }}>
-        <Reveal><p className="eyebrow">Fleischgroßhandel</p></Reveal>
+        <Reveal><p className="eyebrow">Fleischgroßhandel · Köln</p></Reveal>
         <Reveal delay={120}>
           <h1 className="display mt-4 text-[clamp(3rem,9vw,7.5rem)]">Fleisch.<br />Auf den Punkt.</h1>
         </Reveal>
@@ -141,7 +143,7 @@ function Hero() {
         <Reveal delay={380}>
           <div className="mt-9 flex flex-wrap items-center justify-center gap-6">
             <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-pill">Per WhatsApp bestellen</a>
-            <a href="#sortiment" className="link-arrow">Sortiment ansehen <span>›</span></a>
+            <a href="#qualitaet" className="link-arrow">Entdecken <span>›</span></a>
           </div>
         </Reveal>
       </div>
@@ -155,70 +157,97 @@ function Hero() {
   );
 }
 
-function Statement() {
-  const [ref, p] = useScrollProgress<HTMLElement>();
-  const words = "Wir liefern nicht einfach Fleisch. Wir liefern das Vertrauen, dass jeder Teller gelingt.".split(" ");
-  return (
-    <section ref={ref} className="mx-auto max-w-5xl px-6 py-40 md:py-56">
-      <p className="display text-[clamp(2rem,5vw,4rem)] leading-[1.08]">
-        {words.map((w, i) => {
-          const on = p * 1.9 - 0.35 > i / words.length;
-          return <span key={i} className={`transition-colors duration-500 ${on ? "text-foreground" : "text-foreground/15"}`}>{w} </span>;
-        })}
-      </p>
-    </section>
-  );
-}
-
-function Sortiment() {
-  const items = [
-    ["Rind", "Entrecôte, Filet, Hüfte, Brust. Auf Wunsch dry-aged."],
-    ["Lamm", "Koteletts, Keule, Schulter. Zart und aromatisch."],
-    ["Geflügel", "Hähnchenbrust, Schenkel, ganze Tiere. Täglich frisch."],
-    ["Hackfleisch", "Rind, gemischt oder Lamm. In jeder Körnung."],
-  ];
-  const [ref, p] = useScrollProgress<HTMLDivElement>();
-  return (
-    <section id="sortiment" className="bg-muted py-32 md:py-44">
-      <div className="mx-auto max-w-6xl px-6 text-center">
-        <Reveal><p className="eyebrow">Sortiment</p></Reveal>
-        <Reveal delay={100}><MagneticHeading className="mt-3 text-[clamp(2.5rem,7vw,5.5rem)]">Alles, was Ihre<br />Küche braucht.</MagneticHeading></Reveal>
-      </div>
-      <div ref={ref} className="mx-auto mt-20 max-w-6xl overflow-hidden rounded-[2rem] px-0 md:px-6">
-        <img src={sortiment} alt="Rind, Lamm, Geflügel und Hackfleisch" width={1920} height={1088} loading="lazy"
-          className="w-full md:rounded-[2rem]" style={{ transform: `scale(${1.15 - p * 0.15})` }} />
-      </div>
-      <div className="mx-auto mt-20 grid max-w-6xl gap-x-12 gap-y-14 px-6 sm:grid-cols-2 lg:grid-cols-4">
-        {items.map(([t, d], i) => (
-          <Reveal key={t} delay={i * 110}>
-            <h3 className="text-2xl font-semibold tracking-tight">{t}</h3>
-            <p className="mt-2 text-muted-foreground leading-relaxed">{d}</p>
-          </Reveal>
-        ))}
-      </div>
-      <Reveal className="mt-16 text-center"><a href={WHATSAPP} target="_blank" rel="noreferrer" className="link-arrow text-lg">Komplette Preisliste anfragen <span>›</span></a></Reveal>
-    </section>
-  );
-}
-
-function Quality() {
+/* ---------- Scene 2: Qualität, die man sieht ---------- */
+function SceneQualitaet() {
   const [ref, p] = useScrollProgress<HTMLElement>();
   return (
-    <section id="qualitaet" ref={ref} className="relative h-[180vh] bg-ink text-ink-foreground">
-      <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
-        <img src={kuehlhaus} alt="Kühlhaus" width={1920} height={1088} loading="lazy"
+    <section id="qualitaet" ref={ref} className="relative bg-ink text-ink-foreground" style={{ height: "260vh" }}>
+      <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden">
+        <img src={marmorierung} alt="Marmorierung von Premium-Rindfleisch" width={1920} height={1088} loading="lazy"
           className="absolute inset-0 h-full w-full object-cover"
-          style={{ transform: `scale(${1.3 - p * 0.3})`, opacity: 0.25 + p * 0.5 }} />
-        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/70 to-transparent" />
+          style={{ transform: `scale(${1.3 - p * 0.3})`, opacity: 0.3 + p * 0.45 }} />
+        <div className="absolute inset-0 bg-gradient-to-b from-ink via-transparent to-ink" />
+        <div className="relative mx-auto max-w-5xl px-6 text-center">
+          <p className="eyebrow" style={{ opacity: clamp01(p * 4) }}>Qualität</p>
+          <ScrollWords progress={p}
+            className="display mt-4 text-[clamp(2.2rem,6vw,5rem)] leading-[1.05]"
+            text="Qualität, die man sieht. Marmorierung, Farbe, Frische – geprüft bei jeder einzelnen Lieferung." />
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Scene 3: Für jede Küche ---------- */
+const PRODUCTS = [
+  { name: "Rind", desc: "Entrecôte, Filet, Hüfte, Brust. Auf Wunsch dry-aged.", img: produktRind },
+  { name: "Kalb", desc: "Feinfaserig und zart. Schnitzel, Oberschale, Keule.", img: produktKalb },
+  { name: "Geflügel", desc: "Hähnchenbrust, Schenkel, ganze Tiere. Täglich frisch.", img: produktGefluegel },
+  { name: "Lamm", desc: "Koteletts, Keule, Schulter. Zart und aromatisch.", img: produktLamm },
+];
+
+function SceneSortiment() {
+  const [ref, p] = useScrollProgress<HTMLElement>();
+  const seg = p * PRODUCTS.length;
+  return (
+    <section id="sortiment" ref={ref} className="relative bg-background text-foreground" style={{ height: "420vh" }}>
+      <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center overflow-hidden">
+        <div className="pointer-events-none absolute top-20 z-10 text-center md:top-24">
+          <p className="eyebrow">Sortiment</p>
+          <h2 className="display mt-2 text-[clamp(2rem,4.5vw,3.5rem)]">Für jede Küche.</h2>
+        </div>
+        <div className="relative mt-10 h-[42svh] w-full max-w-4xl px-6 md:h-[54svh]">
+          {PRODUCTS.map((prod, i) => {
+            const o = clamp01(1 - Math.abs(seg - (i + 0.5)) * 2);
+            return (
+              <img key={prod.name} src={prod.img} alt={prod.name} width={1920} height={1088} loading="lazy"
+                className="absolute inset-0 h-full w-full rounded-[2rem] object-cover shadow-2xl"
+                style={{ opacity: o, transform: `scale(${1.06 - o * 0.06})` }} />
+            );
+          })}
+        </div>
+        <div className="relative mt-8 h-32 w-full text-center">
+          {PRODUCTS.map((prod, i) => {
+            const o = clamp01(1 - Math.abs(seg - (i + 0.5)) * 2);
+            return (
+              <div key={prod.name} className="absolute inset-0 px-6"
+                style={{ opacity: o, transform: `translateY(${(1 - o) * 24}px)` }}>
+                <div className="display text-[clamp(2.5rem,7vw,5rem)]">{prod.name}</div>
+                <p className="mx-auto mt-2 max-w-md text-muted-foreground">{prod.desc}</p>
+              </div>
+            );
+          })}
+        </div>
+        <div className="absolute bottom-8 flex gap-2">
+          {PRODUCTS.map((prod, i) => (
+            <span key={prod.name} className="h-1 w-10 overflow-hidden rounded-full bg-foreground/15">
+              <span className="block h-full bg-foreground transition-none" style={{ width: `${clamp01(seg - i) * 100}%` }} />
+            </span>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+/* ---------- Scene 4: Frisch unterwegs ---------- */
+function SceneLogistik() {
+  const [ref, p] = useScrollProgress<HTMLElement>();
+  return (
+    <section id="lieferung" ref={ref} className="relative bg-ink text-ink-foreground" style={{ height: "220vh" }}>
+      <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
+        <img src={kuehlwagen} alt="Kühlfahrzeug von TDB Food" width={1920} height={1088} loading="lazy"
+          className="absolute inset-0 h-full w-full object-cover"
+          style={{ transform: `scale(${1.15 - p * 0.15}) translateX(${(0.5 - p) * 5}%)`, opacity: 0.45 + p * 0.45 }} />
+        <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/60 to-transparent" />
         <div className="relative mx-auto w-full max-w-6xl px-6">
-          <p className="eyebrow" style={{ opacity: Math.min(1, p * 4) }}>Qualität</p>
-          <h2 className="display mt-3 max-w-3xl text-[clamp(2.5rem,7vw,5.5rem)]"
-            style={{ opacity: Math.min(1, p * 3), transform: `translateY(${(1 - Math.min(1, p * 3)) * 40}px)` }}>
-            Lückenlose Kühlkette.<br /><span className="text-ink-muted">Vom Schlachthof bis zu Ihnen.</span>
-          </h2>
+          <p className="eyebrow" style={{ opacity: clamp01(p * 4) }}>Kühllogistik</p>
+          <ScrollWords progress={p}
+            className="display mt-4 max-w-3xl text-[clamp(2.5rem,7vw,5.5rem)] leading-[1.02]"
+            text="Frisch unterwegs. Lückenlose Kühlkette – vom Schlachthof bis in Ihre Küche." />
           <div className="mt-12 grid max-w-2xl gap-8 sm:grid-cols-3">
             {[["0–4 °C", "konstant gekühlt"], ["EU", "zertifizierte Betriebe"], ["Halal", "auf Anfrage"]].map(([a, b], i) => {
-              const o = Math.min(1, Math.max(0, p * 4 - 1.2 - i * 0.35));
+              const o = clamp01(p * 4 - 1.2 - i * 0.35);
               return (
                 <div key={a} style={{ opacity: o, transform: `translateY(${(1 - o) * 30}px)` }}>
                   <div className="text-3xl font-semibold tracking-tight">{a}</div>
@@ -233,52 +262,37 @@ function Quality() {
   );
 }
 
-function Delivery() {
-  const [ref, p] = useScrollProgress<HTMLDivElement>();
+/* ---------- Scene 5: Liefergebiet & Service ---------- */
+function SceneService() {
   return (
-    <section id="lieferung" className="py-32 md:py-44">
+    <section className="bg-background py-36 text-foreground md:py-48">
       <div className="mx-auto max-w-6xl px-6 text-center">
-        <Reveal><p className="eyebrow">Lieferung</p></Reveal>
-        <Reveal delay={100}><MagneticHeading className="mt-3 text-[clamp(2.5rem,7vw,5.5rem)]">Heute bestellt.<br />Morgen in der Küche.</MagneticHeading></Reveal>
-        <Reveal delay={200}><p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">Mit eigener Kühlflotte beliefern wir Restaurants, Imbisse, Hotels und Händler – pünktlich und flexibel.</p></Reveal>
-      </div>
-      <div ref={ref} className="mt-20 overflow-hidden">
-        <img src={lieferung} alt="Kühlfahrzeug von TDB Food" width={1920} height={1088} loading="lazy"
-          className="mx-auto w-full max-w-[1600px]" style={{ transform: `translateX(${(0.5 - p) * 12}%) scale(1.1)` }} />
-      </div>
-      <div className="mx-auto mt-20 grid max-w-4xl gap-14 px-6 text-center sm:grid-cols-3">
-        {[["Mo – Sa", "Lieferung an sechs Tagen"], ["Bis 14 Uhr", "bestellt, nächster Tag geliefert"], ["Ab 150 €", "kostenfreie Lieferung"]].map(([a, b], i) => (
-          <Reveal key={a} delay={i * 120}>
-            <div className="text-4xl font-semibold tracking-tight">{a}</div>
-            <div className="mt-2 text-muted-foreground">{b}</div>
-          </Reveal>
-        ))}
-      </div>
-    </section>
-  );
-}
-
-function Numbers() {
-  return (
-    <section className="bg-muted py-32 md:py-40">
-      <div className="mx-auto grid max-w-6xl gap-16 px-6 md:grid-cols-2 md:items-center">
-        <Reveal><MagneticHeading className="text-[clamp(2.5rem,6vw,4.5rem)]">Bestellen,<br />so einfach wie<br />eine Nachricht.</MagneticHeading></Reveal>
-        <Reveal delay={150}>
-          <ol className="space-y-8">
-            {["Schreiben Sie uns per WhatsApp, was Sie brauchen.", "Wir bestätigen Menge, Preis und Liefertermin.", "Ihre Ware kommt gekühlt und pünktlich an."].map((s, i) => (
-              <li key={i} className="flex gap-6">
-                <span className="text-5xl font-semibold tracking-tight text-accent">{i + 1}</span>
-                <span className="pt-2 text-xl leading-snug">{s}</span>
-              </li>
-            ))}
-          </ol>
+        <Reveal><p className="eyebrow">Liefergebiet & Service</p></Reveal>
+        <Reveal delay={100}>
+          <h2 className="display mt-3 text-[clamp(2.5rem,7vw,5.5rem)]">Heute bestellt.<br />Morgen in der Küche.</h2>
+        </Reveal>
+        <Reveal delay={200}>
+          <p className="mx-auto mt-6 max-w-xl text-lg text-muted-foreground">Mit eigener Kühlflotte beliefern wir Restaurants, Imbisse, Hotels und Händler in Köln und der Region – pünktlich und flexibel.</p>
+        </Reveal>
+        <div className="mx-auto mt-20 grid max-w-4xl gap-14 sm:grid-cols-3">
+          {[["Mo – Sa", "Lieferung an sechs Tagen"], ["Bis 14 Uhr", "bestellt, nächster Tag geliefert"], ["Ab 150 €", "kostenfreie Lieferung"]].map(([a, b], i) => (
+            <Reveal key={a} delay={i * 120}>
+              <div className="text-4xl font-semibold tracking-tight">{a}</div>
+              <div className="mt-2 text-muted-foreground">{b}</div>
+            </Reveal>
+          ))}
+        </div>
+        <Reveal delay={150} className="mt-16">
+          <p className="mx-auto max-w-xl text-muted-foreground">Rind, Kalb, Lamm, Geflügel und Hackfleisch – in jeder Körnung und Zuschnitt.</p>
+          <a href={WHATSAPP} target="_blank" rel="noreferrer" className="link-arrow mt-4 text-lg">Komplette Preisliste anfragen <span>›</span></a>
         </Reveal>
       </div>
     </section>
   );
 }
 
-function Contact() {
+/* ---------- Scene 6: Kontakt ---------- */
+function SceneKontakt() {
   return (
     <section id="kontakt" className="bg-ink py-40 text-ink-foreground md:py-56">
       <div className="mx-auto max-w-4xl px-6 text-center">
