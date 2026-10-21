@@ -17,6 +17,7 @@
   --color-signal: var(--signal);
   --color-border: var(--border);
   --color-ink: var(--ink);
+  --color-cinema: var(--cinema);
   --color-ink-foreground: var(--ink-foreground);
   --color-ink-muted: var(--ink-muted);
   --color-whatsapp: var(--whatsapp);
@@ -35,6 +36,7 @@
   --signal: oklch(0.55 0.19 25);
   --border: oklch(0.9 0.004 60);
   --ink: oklch(0.11 0.003 30);
+  --cinema: oklch(0 0 0);
   --ink-foreground: oklch(0.97 0.002 60);
   --ink-muted: oklch(0.65 0.006 40);
   --whatsapp: oklch(0.68 0.16 150);
