@@ -19,7 +19,15 @@ export const Route = createFileRoute("/")({
   component: Index,
 });
 
-const WHATSAPP = "https://wa.me/4900000000000";
+const WHATSAPP_MESSAGE = "Hallo TDB Food, ich interessiere mich für Ihr Sortiment und möchte gerne eine Anfrage stellen.";
+const WHATSAPP = `https://wa.me/4917624115839?text=${encodeURIComponent(WHATSAPP_MESSAGE)}`;
+const PHONE_DISPLAY = "0221 29100919";
+const PHONE_TEL = "tel:+4922129100919";
+const EMAIL = "info@tdb-food.de";
+const INSTAGRAM_URL = "https://www.instagram.com/tdb_food";
+const ADDRESS = "Marconistraße 34, 50769 Köln";
+const MAPS_DIR = `https://www.google.com/maps/dir/?api=1&destination=${encodeURIComponent(ADDRESS)}`;
+const MAPS_EMBED = `https://www.google.com/maps?q=${encodeURIComponent(ADDRESS)}&output=embed`;
 
 /* ---------- motion helpers ---------- */
 function Reveal({ children, delay = 0, className = "" }: { children: ReactNode; delay?: number; className?: string }) {
@@ -272,15 +280,38 @@ function Numbers() {
 
 function Contact() {
   return (
-    <section id="kontakt" className="bg-ink py-40 text-center text-ink-foreground md:py-56">
-      <div className="mx-auto max-w-4xl px-6">
+    <section id="kontakt" className="bg-ink py-40 text-ink-foreground md:py-56">
+      <div className="mx-auto max-w-4xl px-6 text-center">
         <Reveal><h2 className="display text-[clamp(3rem,9vw,7rem)]">Lassen Sie<br />uns reden.</h2></Reveal>
         <Reveal delay={150}><p className="mx-auto mt-6 max-w-lg text-lg text-ink-muted">Neukunde oder Stammkunde – wir sind schnell erreichbar.</p></Reveal>
         <Reveal delay={280}>
-          <div className="mt-12 flex flex-col items-center justify-center gap-6 sm:flex-row">
+          <div className="mt-12 flex flex-col items-center justify-center gap-6 sm:flex-row sm:flex-wrap">
             <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-pill bg-whatsapp"><WaIcon /> WhatsApp schreiben</a>
-            <a href="tel:+4900000000000" className="link-arrow">+49 000 000 000 00 <span>›</span></a>
-            <a href="mailto:info@tdb-food.de" className="link-arrow">info@tdb-food.de <span>›</span></a>
+            <a href={PHONE_TEL} className="link-arrow">{PHONE_DISPLAY} <span>›</span></a>
+            <a href={`mailto:${EMAIL}`} className="link-arrow">{EMAIL} <span>›</span></a>
+            <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="link-arrow"><IgIcon /> @tdb_food <span>›</span></a>
+          </div>
+        </Reveal>
+      </div>
+      <div className="mx-auto mt-24 max-w-5xl px-6">
+        <Reveal>
+          <div className="overflow-hidden rounded-[2rem] border border-ink-foreground/10 shadow-2xl">
+            <iframe
+              title={`Karte: TDB Food, ${ADDRESS}`}
+              src={MAPS_EMBED}
+              className="h-[420px] w-full"
+              loading="lazy"
+              referrerPolicy="no-referrer-when-downgrade"
+            />
+          </div>
+        </Reveal>
+        <Reveal delay={120}>
+          <div className="mt-8 flex flex-col items-center justify-between gap-6 text-center sm:flex-row sm:text-left">
+            <div>
+              <div className="text-xl font-semibold tracking-tight">TDB GmbH · TDB Food – Meat &amp; More</div>
+              <div className="mt-1 text-ink-muted">{ADDRESS}</div>
+            </div>
+            <a href={MAPS_DIR} target="_blank" rel="noreferrer" className="btn-pill">Route planen</a>
           </div>
         </Reveal>
       </div>
@@ -291,9 +322,35 @@ function Contact() {
 function Footer() {
   return (
     <footer className="bg-ink pb-10 text-ink-muted">
-      <div className="mx-auto flex max-w-6xl flex-col justify-between gap-4 border-t border-ink-foreground/10 px-6 pt-8 text-xs sm:flex-row">
-        <span>© {new Date().getFullYear()} TDB Food. Fleischgroßhandel.</span>
-        <div className="flex gap-6"><a href="#" className="hover:text-ink-foreground">Impressum</a><a href="#" className="hover:text-ink-foreground">Datenschutz</a></div>
+      <div className="mx-auto max-w-6xl px-6">
+        <div className="grid gap-10 border-t border-ink-foreground/10 pt-12 text-sm sm:grid-cols-2 md:grid-cols-4">
+          <div>
+            <div className="font-semibold text-ink-foreground">TDB Food – Meat &amp; More</div>
+            <div className="mt-3 leading-relaxed">TDB GmbH<br />Marconistraße 34<br />50769 Köln</div>
+          </div>
+          <div>
+            <div className="font-semibold text-ink-foreground">Kontakt</div>
+            <div className="mt-3 flex flex-col gap-2">
+              <a href={PHONE_TEL} className="transition-colors hover:text-ink-foreground">{PHONE_DISPLAY}</a>
+              <a href={`mailto:${EMAIL}`} className="transition-colors hover:text-ink-foreground">{EMAIL}</a>
+            </div>
+          </div>
+          <div>
+            <div className="font-semibold text-ink-foreground">Direkt</div>
+            <div className="mt-3 flex flex-col gap-2">
+              <a href={WHATSAPP} target="_blank" rel="noreferrer" className="transition-colors hover:text-ink-foreground">WhatsApp: 0176 24115839</a>
+              <a href={INSTAGRAM_URL} target="_blank" rel="noreferrer" className="transition-colors hover:text-ink-foreground">Instagram: @tdb_food</a>
+            </div>
+          </div>
+          <div>
+            <div className="font-semibold text-ink-foreground">Rechtliches</div>
+            <div className="mt-3 flex flex-col gap-2">
+              <a href="#" className="transition-colors hover:text-ink-foreground">Impressum</a>
+              <a href="#" className="transition-colors hover:text-ink-foreground">Datenschutz</a>
+            </div>
+          </div>
+        </div>
+        <div className="mt-12 text-xs">© {new Date().getFullYear()} TDB GmbH. Fleischgroßhandel.</div>
       </div>
     </footer>
   );
@@ -303,6 +360,16 @@ function WaIcon() {
   return (
     <svg viewBox="0 0 24 24" className="h-5 w-5" fill="currentColor" aria-hidden>
       <path d="M17.5 14.4c-.3-.1-1.7-.8-2-.9-.3-.1-.5-.1-.7.1-.2.3-.8.9-.9 1.1-.2.2-.3.2-.6.1-.3-.1-1.2-.4-2.3-1.4-.9-.8-1.4-1.7-1.6-2-.2-.3 0-.4.1-.6l.4-.5c.1-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.2c-.2-.6-.5-.5-.7-.5h-.6c-.2 0-.5.1-.8.4-.3.3-1 1-1 2.4s1 2.8 1.2 3c.1.2 2 3.1 4.9 4.3 2.4 1 2.9.8 3.4.7.5-.1 1.7-.7 2-1.4.2-.7.2-1.2.2-1.4-.1-.1-.3-.2-.6-.3zM12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2z" />
+    </svg>
+  );
+}
+
+function IgIcon() {
+  return (
+    <svg viewBox="0 0 24 24" className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden>
+      <rect x="3" y="3" width="18" height="18" rx="5" />
+      <circle cx="12" cy="12" r="4" />
+      <circle cx="17.2" cy="6.8" r="0.6" fill="currentColor" stroke="none" />
     </svg>
   );
 }
