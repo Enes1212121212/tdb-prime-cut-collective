@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 
 /** Plays once each time its slide becomes active, then rests on the extracted final frame. */
-export function SlideFilm({ src, still, alt, active }: { src?: string; still: string; alt: string; active: boolean }) {
+export function SlideFilm({ src, still, alt, active }: { src?: string | undefined; still: string; alt: string; active: boolean }) {
   const ref = useRef<HTMLVideoElement>(null);
   const [playing, setPlaying] = useState(false);
 
