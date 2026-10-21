@@ -186,45 +186,126 @@ const PRODUCTS = [
   { name: "Lamm", desc: "Koteletts, Keule, Schulter. Zart und aromatisch.", img: produktLamm },
 ];
 
+const AUTOPLAY_MS = 4500;
+
 function SceneSortiment() {
-  const [ref, p] = useScrollProgress<HTMLElement>();
-  const seg = p * PRODUCTS.length;
+  const trackRef = useRef<HTMLDivElement>(null);
+  const sectionRef = useRef<HTMLElement>(null);
+  const [index, setIndex] = useState(0);
+  const [auto, setAuto] = useState(true);
+  const [inView, setInView] = useState(false);
+
+  const goTo = (i: number) => {
+    const el = trackRef.current;
+    if (!el) return;
+    el.scrollTo({ left: i * el.clientWidth, behavior: "smooth" });
+  };
+
+  /* autoplay: advance while playing and visible */
+  useEffect(() => {
+    if (!auto || !inView) return;
+    const id = setInterval(() => {
+      const el = trackRef.current;
+      if (!el) return;
+      const cur = Math.round(el.scrollLeft / el.clientWidth);
+      goTo((cur + 1) % PRODUCTS.length);
+    }, AUTOPLAY_MS);
+    return () => clearInterval(id);
+  }, [auto, inView]);
+
+  /* only play while the section is on screen */
+  useEffect(() => {
+    const el = sectionRef.current;
+    if (!el) return;
+    const io = new IntersectionObserver(([e]) => setInView(!!e?.isIntersecting), { threshold: 0.3 });
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+
+  const onScroll = () => {
+    const el = trackRef.current;
+    if (!el) return;
+    const i = Math.round(el.scrollLeft / el.clientWidth);
+    if (i !== index) setIndex(i);
+  };
+
+  const stopAuto = () => setAuto(false);
+
   return (
-    <section id="sortiment" ref={ref} className="relative bg-background text-foreground" style={{ height: "280vh" }}>
-      <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center overflow-hidden">
-        <div className="pointer-events-none absolute top-20 z-10 text-center md:top-24">
-          <p className="eyebrow">Sortiment</p>
-          <h2 className="display mt-2 text-[clamp(2rem,4.5vw,3.5rem)]">Für jede Küche.</h2>
-        </div>
-        <div className="relative mt-10 h-[42svh] w-full max-w-4xl px-6 md:h-[54svh]">
-          {PRODUCTS.map((prod, i) => {
-            const o = clamp01(1 - Math.abs(seg - (i + 0.5)) * 3);
-            return (
-              <img key={prod.name} src={prod.img} alt={prod.name} width={1920} height={1088} loading="lazy"
-                className="absolute inset-0 h-full w-full rounded-[2rem] object-cover shadow-2xl"
-                style={{ opacity: o, transform: `scale(${1.06 - o * 0.06})` }} />
-            );
-          })}
-        </div>
-        <div className="relative mt-8 h-32 w-full text-center">
-          {PRODUCTS.map((prod, i) => {
-            const o = clamp01(1 - Math.abs(seg - (i + 0.5)) * 3);
-            return (
-              <div key={prod.name} className="absolute inset-0 px-6"
-                style={{ opacity: o, transform: `translateY(${(1 - o) * 24}px)` }}>
+    <section id="sortiment" ref={sectionRef} className="bg-background py-28 text-foreground md:py-40">
+      <div className="mx-auto mb-12 max-w-6xl px-6 text-center">
+        <Reveal><p className="eyebrow">Sortiment</p></Reveal>
+        <Reveal delay={100}>
+          <h2 className="display mt-2 text-[clamp(2.5rem,6vw,4.5rem)]">Für jede Küche.</h2>
+        </Reveal>
+      </div>
+
+      <div
+        ref={trackRef}
+        onScroll={onScroll}
+        onPointerDown={stopAuto}
+        onWheel={stopAuto}
+        className="no-scrollbar flex w-full snap-x snap-mandatory overflow-x-auto"
+      >
+        {PRODUCTS.map((prod) => (
+          <div key={prod.name} className="w-full shrink-0 snap-center px-6">
+            <div className="relative mx-auto h-[58svh] max-w-5xl overflow-hidden rounded-[2rem] shadow-2xl md:h-[64svh]">
+              <img src={prod.img} alt={prod.name} width={1920} height={1088} loading="lazy"
+                className="h-full w-full select-none object-cover" draggable={false} />
+              <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
+              <div className="absolute inset-x-0 bottom-0 p-8 text-ink-foreground md:p-12">
                 <div className="display text-[clamp(2.5rem,7vw,5rem)]">{prod.name}</div>
-                <p className="mx-auto mt-2 max-w-md text-muted-foreground">{prod.desc}</p>
+                <p className="mt-2 max-w-md text-ink-foreground/80">{prod.desc}</p>
               </div>
-            );
-          })}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* controls: arrows, progress segments, play/pause */}
+      <div className="mx-auto mt-8 flex max-w-5xl items-center justify-between px-6">
+        <div className="flex gap-3">
+          <button type="button" aria-label="Vorheriges Produkt"
+            onClick={() => { stopAuto(); goTo((index - 1 + PRODUCTS.length) % PRODUCTS.length); }}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground/8 text-lg transition-colors duration-300 hover:bg-foreground/15">‹</button>
+          <button type="button" aria-label="Nächstes Produkt"
+            onClick={() => { stopAuto(); goTo((index + 1) % PRODUCTS.length); }}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground/8 text-lg transition-colors duration-300 hover:bg-foreground/15">›</button>
         </div>
-        <div className="absolute bottom-8 flex gap-2">
+
+        <div className="flex gap-2">
           {PRODUCTS.map((prod, i) => (
-            <span key={prod.name} className="h-1 w-10 overflow-hidden rounded-full bg-foreground/15">
-              <span className="block h-full bg-foreground transition-none" style={{ width: `${clamp01(seg - i) * 100}%` }} />
-            </span>
+            <button key={prod.name} type="button" aria-label={`Zu ${prod.name}`}
+              onClick={() => { stopAuto(); goTo(i); }}
+              className="h-1 w-10 overflow-hidden rounded-full bg-foreground/15">
+              <span
+                key={`${i}-${index}-${auto}`}
+                className="block h-full bg-foreground"
+                style={
+                  i < index ? { width: "100%" }
+                  : i > index ? { width: "0%" }
+                  : auto && inView ? { animation: `fillbar ${AUTOPLAY_MS}ms linear forwards` }
+                  : { width: "100%" }
+                }
+              />
+            </button>
           ))}
         </div>
+
+        <button type="button"
+          aria-label={auto ? "Automatische Wiedergabe pausieren" : "Automatische Wiedergabe starten"}
+          onClick={() => setAuto((a) => !a)}
+          className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground/8 transition-colors duration-300 hover:bg-foreground/15">
+          {auto ? (
+            <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
+              <rect x="6" y="5" width="4" height="14" rx="1" /><rect x="14" y="5" width="4" height="14" rx="1" />
+            </svg>
+          ) : (
+            <svg viewBox="0 0 24 24" className="h-4 w-4 translate-x-[1px]" fill="currentColor" aria-hidden>
+              <path d="M8 5.5v13a1 1 0 0 0 1.53.85l10.2-6.5a1 1 0 0 0 0-1.7L9.53 4.65A1 1 0 0 0 8 5.5z" />
+            </svg>
+          )}
+        </button>
       </div>
     </section>
   );
