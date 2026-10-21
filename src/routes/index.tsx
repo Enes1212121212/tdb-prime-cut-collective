@@ -262,16 +262,9 @@ function SceneSortiment() {
         ))}
       </div>
 
-      {/* controls: arrows, progress segments, play/pause */}
+      {/* controls: progress segments, play/pause */}
       <div className="mx-auto mt-8 flex max-w-5xl items-center justify-between px-6">
-        <div className="flex gap-3">
-          <button type="button" aria-label="Vorheriges Produkt"
-            onClick={() => { stopAuto(); goTo((index - 1 + PRODUCTS.length) % PRODUCTS.length); }}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground/8 text-lg transition-colors duration-300 hover:bg-foreground/15">‹</button>
-          <button type="button" aria-label="Nächstes Produkt"
-            onClick={() => { stopAuto(); goTo((index + 1) % PRODUCTS.length); }}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground/8 text-lg transition-colors duration-300 hover:bg-foreground/15">›</button>
-        </div>
+
 
         <div className="flex gap-2">
           {PRODUCTS.map((prod, i) => (
