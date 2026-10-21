@@ -238,7 +238,7 @@ function SceneLogistik() {
       <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
         <img src={kuehlwagen} alt="Kühlfahrzeug von TDB Food" width={1920} height={1088} loading="lazy"
           className="absolute inset-0 h-full w-full object-cover"
-          style={{ transform: `scale(${1.15 - p * 0.15}) translateX(${(0.5 - p) * 5}%)`, opacity: 0.3 + p * 0.5 }} />
+          style={{ transform: `scale(${1.15 - p * 0.15}) translateX(${(0.5 - p) * 5}%)`, opacity: 0.45 + p * 0.45 }} />
         <div className="absolute inset-0 bg-gradient-to-r from-ink via-ink/60 to-transparent" />
         <div className="relative mx-auto w-full max-w-6xl px-6">
           <p className="eyebrow" style={{ opacity: clamp01(p * 4) }}>Kühllogistik</p>
