@@ -2,8 +2,11 @@ import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from "react";
 import { IntroFilm } from "@/components/intro-film";
 import marmorierung from "@/assets/marmorierung.jpg";
-import produktRind from "@/assets/produkt-rind.jpg";
-import produktKalb from "@/assets/produkt-kalb.jpg";
+import { SlideFilm } from "@/components/slide-film";
+import rindFilm from "@/assets/sortiment/rind.mp4.asset.json";
+import rindFinal from "@/assets/sortiment/rind-final.jpg.asset.json";
+import kalbFilm from "@/assets/sortiment/kalb.mp4.asset.json";
+import kalbFinal from "@/assets/sortiment/kalb-final.jpg.asset.json";
 import produktGefluegel from "@/assets/produkt-gefluegel.jpg";
 import produktLamm from "@/assets/produkt-lamm.jpg";
 import kuehlwagen from "@/assets/kuehlwagen.jpg";
@@ -177,9 +180,9 @@ function SceneQualitaet() {
 }
 
 /* ---------- Scene 3: Für jede Küche ---------- */
-const PRODUCTS = [
-  { name: "Rind", desc: "Entrecôte, Filet, Hüfte, Brust. Auf Wunsch dry-aged.", img: produktRind },
-  { name: "Kalb", desc: "Feinfaserig und zart. Schnitzel, Oberschale, Keule.", img: produktKalb },
+const PRODUCTS: { name: string; desc: string; img: string; film?: string }[] = [
+  { name: "Rind", desc: "Entrecôte, Filet, Hüfte, Brust. Auf Wunsch dry-aged.", img: rindFinal.url, film: rindFilm.url },
+  { name: "Kalb", desc: "Feinfaserig und zart. Schnitzel, Oberschale, Keule.", img: kalbFinal.url, film: kalbFilm.url },
   { name: "Geflügel", desc: "Hähnchenbrust, Schenkel, ganze Tiere. Täglich frisch.", img: produktGefluegel },
   { name: "Lamm", desc: "Koteletts, Keule, Schulter. Zart und aromatisch.", img: produktLamm },
 ];
@@ -279,11 +282,10 @@ function SceneSortiment() {
 
         className="no-scrollbar flex w-full snap-x snap-mandatory overflow-x-auto"
       >
-        {PRODUCTS.map((prod) => (
+        {PRODUCTS.map((prod, i) => (
           <div key={prod.name} className="w-full shrink-0 snap-center px-6">
             <div className="relative mx-auto h-[58svh] max-w-5xl overflow-hidden rounded-[2rem] shadow-2xl md:h-[64svh]">
-              <img src={prod.img} alt={prod.name} width={1920} height={1088} loading="lazy"
-                className="h-full w-full select-none object-cover" draggable={false} />
+              <SlideFilm src={prod.film} still={prod.img} alt={prod.name} active={inView && i === index} />
               <div className="pointer-events-none absolute inset-0 bg-gradient-to-t from-ink/80 via-ink/10 to-transparent" />
               <div className="absolute inset-x-0 bottom-0 p-8 text-ink-foreground md:p-12">
                 <div className="display text-[clamp(2.5rem,7vw,5rem)]">{prod.name}</div>
