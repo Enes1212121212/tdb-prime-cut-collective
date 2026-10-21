@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from "react";
 import heroSteak from "@/assets/hero-steak.jpg";
 import marmorierung from "@/assets/marmorierung.jpg";
 import produktRind from "@/assets/produkt-rind.jpg";
@@ -194,6 +194,10 @@ function SceneSortiment() {
   const [index, setIndex] = useState(0);
   const [auto, setAuto] = useState(true);
   const [inView, setInView] = useState(false);
+  /* a pause made with the button stays until play is pressed again */
+  const heldRef = useRef(false);
+  /* start point of a drag, so only real horizontal swipes pause the slider */
+  const drag = useRef({ active: false, x: 0, y: 0 });
 
   const goTo = (i: number) => {
     const el = trackRef.current;
@@ -213,11 +217,17 @@ function SceneSortiment() {
     return () => clearInterval(id);
   }, [auto, inView]);
 
-  /* only play while the section is on screen */
+  /* play right away as soon as the section reaches the middle of the screen */
   useEffect(() => {
     const el = sectionRef.current;
     if (!el) return;
-    const io = new IntersectionObserver(([e]) => setInView(!!e?.isIntersecting), { threshold: 0.3 });
+    const io = new IntersectionObserver(
+      ([e]) => {
+        setInView(!!e?.isIntersecting);
+        if (e?.isIntersecting && !heldRef.current) setAuto(true);
+      },
+      { rootMargin: "-25% 0px -25% 0px", threshold: 0 },
+    );
     io.observe(el);
     return () => io.disconnect();
   }, []);
@@ -231,6 +241,25 @@ function SceneSortiment() {
 
   const stopAuto = () => setAuto(false);
 
+  const onPointerDown = (e: ReactPointerEvent<HTMLDivElement>) => {
+    drag.current = { active: true, x: e.clientX, y: e.clientY };
+  };
+
+  const onPointerMove = (e: ReactPointerEvent<HTMLDivElement>) => {
+    if (!drag.current.active) return;
+    const dx = e.clientX - drag.current.x;
+    const dy = e.clientY - drag.current.y;
+    /* only a horizontal swipe pauses – scrolling the page must not */
+    if (Math.abs(dx) > 12 && Math.abs(dx) > Math.abs(dy)) stopAuto();
+  };
+
+  const endDrag = () => { drag.current.active = false; };
+
+  const onWheel = (e: ReactWheelEvent<HTMLDivElement>) => {
+    if (Math.abs(e.deltaX) > Math.abs(e.deltaY)) stopAuto();
+  };
+
+
   return (
     <section id="sortiment" ref={sectionRef} className="bg-background py-28 text-foreground md:py-40">
       <div className="mx-auto mb-12 max-w-6xl px-6 text-center">
@@ -243,8 +272,13 @@ function SceneSortiment() {
       <div
         ref={trackRef}
         onScroll={onScroll}
-        onPointerDown={stopAuto}
-        onWheel={stopAuto}
+        onPointerDown={onPointerDown}
+        onPointerMove={onPointerMove}
+        onPointerUp={endDrag}
+        onPointerCancel={endDrag}
+        onPointerLeave={endDrag}
+        onWheel={onWheel}
+
         className="no-scrollbar flex w-full snap-x snap-mandatory overflow-x-auto"
       >
         {PRODUCTS.map((prod) => (
@@ -265,8 +299,8 @@ function SceneSortiment() {
       {/* controls: progress segments, play/pause */}
       <div className="mx-auto mt-8 flex max-w-5xl items-center justify-center gap-6 px-6">
         <div className="flex gap-2">
-
           {PRODUCTS.map((prod, i) => (
+
             <button key={prod.name} type="button" aria-label={`Zu ${prod.name}`}
               onClick={() => { stopAuto(); goTo(i); }}
               className="h-1 w-10 overflow-hidden rounded-full bg-foreground/15">
@@ -286,7 +320,7 @@ function SceneSortiment() {
 
         <button type="button"
           aria-label={auto ? "Automatische Wiedergabe pausieren" : "Automatische Wiedergabe starten"}
-          onClick={() => setAuto((a) => !a)}
+          onClick={() => { const next = !auto; setAuto(next); heldRef.current = !next; }}
           className="flex h-10 w-10 items-center justify-center rounded-full bg-foreground/8 transition-colors duration-300 hover:bg-foreground/15">
           {auto ? (
             <svg viewBox="0 0 24 24" className="h-4 w-4" fill="currentColor" aria-hidden>
