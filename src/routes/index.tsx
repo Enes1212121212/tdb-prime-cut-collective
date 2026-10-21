@@ -81,7 +81,7 @@ function ScrollWords({ text, progress, className = "", dim = "text-ink-foregroun
   return (
     <p className={className}>
       {words.map((w, i) => {
-        const lit = progress * 1.7 - 0.25 > i / words.length;
+        const lit = progress * 2.6 - 0.2 > i / words.length;
         return <span key={i} className={`transition-colors duration-500 ${lit ? on : dim}`}>{w} </span>;
       })}
     </p>
@@ -161,7 +161,7 @@ function SceneHero() {
 function SceneQualitaet() {
   const [ref, p] = useScrollProgress<HTMLElement>();
   return (
-    <section id="qualitaet" ref={ref} className="relative bg-ink text-ink-foreground" style={{ height: "260vh" }}>
+    <section id="qualitaet" ref={ref} className="relative bg-ink text-ink-foreground" style={{ height: "170vh" }}>
       <div className="sticky top-0 flex h-[100svh] items-center justify-center overflow-hidden">
         <img src={marmorierung} alt="Marmorierung von Premium-Rindfleisch" width={1920} height={1088} loading="lazy"
           className="absolute inset-0 h-full w-full object-cover"
@@ -190,7 +190,7 @@ function SceneSortiment() {
   const [ref, p] = useScrollProgress<HTMLElement>();
   const seg = p * PRODUCTS.length;
   return (
-    <section id="sortiment" ref={ref} className="relative bg-background text-foreground" style={{ height: "420vh" }}>
+    <section id="sortiment" ref={ref} className="relative bg-background text-foreground" style={{ height: "280vh" }}>
       <div className="sticky top-0 flex h-[100svh] flex-col items-center justify-center overflow-hidden">
         <div className="pointer-events-none absolute top-20 z-10 text-center md:top-24">
           <p className="eyebrow">Sortiment</p>
@@ -198,7 +198,7 @@ function SceneSortiment() {
         </div>
         <div className="relative mt-10 h-[42svh] w-full max-w-4xl px-6 md:h-[54svh]">
           {PRODUCTS.map((prod, i) => {
-            const o = clamp01(1 - Math.abs(seg - (i + 0.5)) * 2);
+            const o = clamp01(1 - Math.abs(seg - (i + 0.5)) * 3);
             return (
               <img key={prod.name} src={prod.img} alt={prod.name} width={1920} height={1088} loading="lazy"
                 className="absolute inset-0 h-full w-full rounded-[2rem] object-cover shadow-2xl"
@@ -208,7 +208,7 @@ function SceneSortiment() {
         </div>
         <div className="relative mt-8 h-32 w-full text-center">
           {PRODUCTS.map((prod, i) => {
-            const o = clamp01(1 - Math.abs(seg - (i + 0.5)) * 2);
+            const o = clamp01(1 - Math.abs(seg - (i + 0.5)) * 3);
             return (
               <div key={prod.name} className="absolute inset-0 px-6"
                 style={{ opacity: o, transform: `translateY(${(1 - o) * 24}px)` }}>
@@ -234,7 +234,7 @@ function SceneSortiment() {
 function SceneLogistik() {
   const [ref, p] = useScrollProgress<HTMLElement>();
   return (
-    <section id="lieferung" ref={ref} className="relative bg-ink text-ink-foreground" style={{ height: "220vh" }}>
+    <section id="lieferung" ref={ref} className="relative bg-ink text-ink-foreground" style={{ height: "160vh" }}>
       <div className="sticky top-0 flex h-[100svh] items-center overflow-hidden">
         <img src={kuehlwagen} alt="Kühlfahrzeug von TDB Food" width={1920} height={1088} loading="lazy"
           className="absolute inset-0 h-full w-full object-cover"
