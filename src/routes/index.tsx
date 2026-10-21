@@ -263,7 +263,7 @@ function SceneSortiment() {
       </div>
 
       {/* controls: progress segments, play/pause */}
-      <div className="mx-auto mt-8 flex max-w-5xl items-center justify-between px-6">
+      <div className="mx-auto mt-8 flex max-w-5xl items-center justify-center gap-6 px-6">
         <div className="flex gap-2">
 
           {PRODUCTS.map((prod, i) => (
