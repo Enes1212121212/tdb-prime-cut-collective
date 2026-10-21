@@ -1,6 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useRef, useState, type PointerEvent as ReactPointerEvent, type ReactNode, type WheelEvent as ReactWheelEvent } from "react";
-import heroSteak from "@/assets/hero-steak.jpg";
+import { IntroFilm } from "@/components/intro-film";
 import marmorierung from "@/assets/marmorierung.jpg";
 import produktRind from "@/assets/produkt-rind.jpg";
 import produktKalb from "@/assets/produkt-kalb.jpg";
@@ -130,28 +130,26 @@ function SceneHero() {
   const [ref, p] = useScrollProgress<HTMLElement>();
   const t = clamp01((p - 0.5) * 2);
   return (
-    <section ref={ref} className="relative min-h-[100svh] bg-ink text-ink-foreground">
-      <div className="mx-auto flex max-w-6xl flex-col items-center px-6 pt-32 text-center md:pt-40"
-        style={{ opacity: 1 - t * 1.4, transform: `translateY(${t * -60}px)` }}>
+    <section ref={ref} className="relative flex h-[92svh] min-h-[580px] flex-col justify-between overflow-hidden bg-cinema text-ink-foreground md:min-h-[720px]">
+      <div className="pointer-events-none absolute -inset-x-[25%] bottom-[12%] top-[22%] md:inset-x-0 md:bottom-[8%] md:top-[10%]"
+        style={{ transform: `scale(${1 + t * 0.12})` }}>
+        <IntroFilm />
+      </div>
+      <div className="relative z-10 mx-auto flex max-w-6xl flex-col items-center px-6 pt-20 text-center md:pt-24">
         <Reveal><p className="eyebrow">Fleischgroßhandel · Köln</p></Reveal>
         <Reveal delay={120}>
-          <h1 className="display mt-4 text-[clamp(3rem,9vw,7.5rem)]">Fleisch.<br />Auf den Punkt.</h1>
+          <h1 className="mt-3 text-5xl font-semibold leading-none md:text-7xl">TDB Food</h1>
         </Reveal>
-        <Reveal delay={260}>
-          <p className="mx-auto mt-6 max-w-xl text-lg text-ink-muted md:text-xl">Ausgewählte Qualität für Gastronomie und Handel. Gekühlt geliefert, zuverlässig wie ein Uhrwerk.</p>
-        </Reveal>
-        <Reveal delay={380}>
-          <div className="mt-9 flex flex-wrap items-center justify-center gap-6">
+        <Reveal delay={220}><p className="mt-3 text-xl font-medium md:text-3xl">Fleisch. Auf den Punkt.</p></Reveal>
+      </div>
+      <div className="relative z-10 mx-auto max-w-2xl px-6 pb-7 text-center md:pb-10">
+        <Reveal delay={260}><p className="mx-auto max-w-xl text-sm text-ink-muted md:text-base">Ausgewählte Qualität für Gastronomie und Handel. Gekühlt geliefert, zuverlässig wie ein Uhrwerk.</p></Reveal>
+        <Reveal delay={320}>
+          <div className="mt-5 flex flex-wrap items-center justify-center gap-x-6 gap-y-3">
             <a href={WHATSAPP} target="_blank" rel="noreferrer" className="btn-pill">Per WhatsApp bestellen</a>
             <a href="#qualitaet" className="link-arrow">Entdecken <span>›</span></a>
           </div>
         </Reveal>
-      </div>
-      <div className="relative mx-auto mt-6 max-w-[1600px] md:-mt-6">
-        <img src={heroSteak} alt="Dry-Aged Ribeye Steak" width={1920} height={1088} fetchPriority="high"
-          className="w-full select-none"
-          style={{ transform: `scale(${1 + p * 0.25}) translateY(${p * 40}px)` }} />
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 h-1/3 bg-gradient-to-t from-ink to-transparent" />
       </div>
     </section>
   );
