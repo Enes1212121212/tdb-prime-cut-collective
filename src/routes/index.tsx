@@ -7,8 +7,10 @@ import rindFilm from "@/assets/sortiment/rind.mp4.asset.json";
 import rindFinal from "@/assets/sortiment/rind-final.jpg.asset.json";
 import kalbFilm from "@/assets/sortiment/kalb.mp4.asset.json";
 import kalbFinal from "@/assets/sortiment/kalb-final.jpg.asset.json";
-import produktGefluegel from "@/assets/produkt-gefluegel.jpg";
-import produktLamm from "@/assets/produkt-lamm.jpg";
+import gefluegelFilm from "@/assets/sortiment/gefluegel.mp4.asset.json";
+import gefluegelFinal from "@/assets/sortiment/gefluegel-final.jpg.asset.json";
+import lammFilm from "@/assets/sortiment/lamm.mp4.asset.json";
+import lammFinal from "@/assets/sortiment/lamm-final.jpg.asset.json";
 import kuehlwagen from "@/assets/kuehlwagen.jpg";
 
 export const Route = createFileRoute("/")({
@@ -183,8 +185,8 @@ function SceneQualitaet() {
 const PRODUCTS: { name: string; desc: string; img: string; film?: string }[] = [
   { name: "Rind", desc: "Entrecôte, Filet, Hüfte, Brust. Auf Wunsch dry-aged.", img: rindFinal.url, film: rindFilm.url },
   { name: "Kalb", desc: "Feinfaserig und zart. Schnitzel, Oberschale, Keule.", img: kalbFinal.url, film: kalbFilm.url },
-  { name: "Geflügel", desc: "Hähnchenbrust, Schenkel, ganze Tiere. Täglich frisch.", img: produktGefluegel },
-  { name: "Lamm", desc: "Koteletts, Keule, Schulter. Zart und aromatisch.", img: produktLamm },
+  { name: "Geflügel", desc: "Hähnchenbrust, Schenkel, ganze Tiere. Täglich frisch.", img: gefluegelFinal.url, film: gefluegelFilm.url },
+  { name: "Lamm", desc: "Koteletts, Keule, Schulter. Zart und aromatisch.", img: lammFinal.url, film: lammFilm.url },
 ];
 
 const AUTOPLAY_MS = 4500;
